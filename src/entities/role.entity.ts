@@ -4,43 +4,38 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { User } from './user.entity';
 import { Permission } from './permission.entity';
+import { ROLES } from 'src/constants/roles';
 
 @Entity()
-export class User {
+export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
+  @Column({ default: ROLES.USER.guard })
+  guard: string;
 
   @Column({ nullable: true })
-  phone: string;
+  createdBy: number;
 
-  @Column({ nullable: true })
-  avatar: string;
-
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
+  @OneToMany(() => User, (user) => user.role)
+  users: User[];
 
   @ManyToMany(() => Permission, { cascade: true })
   @JoinTable({
-    name: 'user_permissions',
-    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    name: 'role_permissions',
+    joinColumn: { name: 'roleId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' },
   })
-  userPermissions: Permission[];
+  permissions: Permission[];
 
   @CreateDateColumn()
   createdAt: Date;
