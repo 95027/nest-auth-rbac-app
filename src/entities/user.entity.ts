@@ -11,7 +11,7 @@ import {
 import { Role } from './role.entity';
 import { Permission } from './permission.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
